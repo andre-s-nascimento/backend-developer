@@ -1,13 +1,16 @@
 package net.snascimento.placeservice.domain;
 
+import com.github.slugify.Slugify;
 import net.snascimento.placeservice.api.PlaceRequest;
 import reactor.core.publisher.Mono;
 
 public class PlaceService {
   private final PlaceRepository placeRepository;
+  private final Slugify slg;
 
   public PlaceService(PlaceRepository placeRepository) {
     this.placeRepository = placeRepository;
+    this.slg = Slugify.builder().build();
   }
 
   public Mono<Place> create(PlaceRequest placeRequest) {
@@ -15,10 +18,10 @@ public class PlaceService {
         new Place(
             null,
             placeRequest.name(),
-            placeRequest.slug(),
+            slg.slugify(placeRequest.name()),
             placeRequest.state(),
-            placeRequest.createdAt(),
-            placeRequest.updatedAt());
+            null,
+            null);
     return placeRepository.save(place);
   }
 }
